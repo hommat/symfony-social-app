@@ -4,12 +4,12 @@ namespace App\Form\Type;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,15 +20,10 @@ class UserType extends AbstractType
     $builder
       ->add('username', TextType::class)
       ->add('email', EmailType::class)
-      ->add('password', RepeatedType::class, [
-        'type' => PasswordType::class,
-        'invalid_message' => 'The password fields must match.',
-        'first_options'  => ['label' => 'Password'],
-        'second_options' => ['label' => 'Repeat Password'],
-      ])
+      ->add('password', RepeatedType::class, ['first_name' => 'Password', 'second_name' => 'Confirm_password', 'type' => PasswordType::class])
       ->add('firstName', TextType::class)
       ->add('lastName', TextType::class)
-      ->add('birthDate', DateType::class)
+      ->add('birthDate', BirthdayType::class)
       ->add('save', SubmitType::class);
   }
 

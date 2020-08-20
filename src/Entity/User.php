@@ -2,109 +2,174 @@
 
 namespace App\Entity;
 
-use DateTime;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class User
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Table(name="`user`")
+ */
+class User implements UserInterface
 {
-  /**
-   * @Assert\NotBlank
-   * @Assert\Length(min = 3, max = 20)
-   */
-  private $username;
+    /**
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
+     */
+    private $id;
 
-  /**
-   * @Assert\NotBlank
-   * @Assert\Email
-   */
-  private $email;
+    /**
+     * @ORM\Column(type="string", unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=2, max=20)
+     */
+    private $username;
 
-  /**
-   * @Assert\NotBlank
-   * @Assert\Length(min = 3, max = 20)
-   */
-  private $password;
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\Length(min=2, max=100)
+     */
+    private $password;
 
-  /**
-   * @Assert\NotBlank
-   * @Assert\Length(min = 3, max = 20)
-   */
-  private $firstName;
+    /**
+     * @ORM\Column(type="string", unique=true)
+     * @Assert\Email()
+     * @Assert\Length(min=2, max=40)
+     */
+    private $email;
 
-  /**
-   * @Assert\NotBlank
-   * @Assert\Length(min = 3, max = 20)
-   */
-  private $lastName;
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     * @Assert\Length(min=2, max=20)
+     */
+    private $firstName;
 
-  /**
-   * @Assert\NotBlank
-   * @Assert\Type("\DateTime")
-   */
-  private $birthDate;
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     * @Assert\Length(min=2, max=20)
+     */
+    private $lastName;
 
-  public function __construct()
-  {
-    $this->birthDate = new DateTime();
-  }
+    /**
+     * @ORM\Column(type="date")
+     * @Assert\GreaterThan("- 121years")
+     */
+    private $birthDate;
 
-  public function getUsername(): string
-  {
-    return $this->username;
-  }
+    /**
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
 
-  public function getEmail(): string
-  {
-    return $this->email;
-  }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-  public function getPassword(): string
-  {
-    return $this->password;
-  }
+    public function getUsername(): string
+    {
+        return (string) $this->username;
+    }
 
-  public function getFirstName(): string
-  {
-    return $this->firstName;
-  }
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
 
-  public function getLastName(): string
-  {
-    return $this->lastName;
-  }
+        return $this;
+    }
 
-  public function getBirthDate(): \DateTime
-  {
-    return $this->birthDate;
-  }
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
 
-  public function setUsername(string $username)
-  {
-    $this->username = $username;
-  }
+        return array_unique($roles);
+    }
 
-  public function setEmail(string $email)
-  {
-    $this->email = $email;
-  }
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
-  public function setPassword(string $password)
-  {
-    $this->password = $password;
-  }
+        return $this;
+    }
 
-  public function setFirstName(string $firstName)
-  {
-    $this->firstName = $firstName;
-  }
+    public function getPassword(): string
+    {
+        return (string) $this->password;
+    }
 
-  public function setLastName(string $lastName)
-  {
-    $this->lastName = $lastName;
-  }
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
 
-  public function setBirthDate(\DateTime $birthDate)
-  {
-    $this->birthDate = $birthDate;
-  }
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
+    {
+        // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
 }
