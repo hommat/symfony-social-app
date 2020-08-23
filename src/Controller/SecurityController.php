@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,7 +28,7 @@ class SecurityController extends AbstractController
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         if ($this->isGranted("ROLE_USER")) {
-            return new RedirectResponse($this->urlGenerator->generate("app_home"));
+            return $this->redirectToRoute("app_home");
         }
 
         $user = new User();
@@ -57,7 +56,7 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->isGranted("ROLE_USER")) {
-            return new RedirectResponse($this->urlGenerator->generate("app_home"));
+            return $this->redirectToRoute("app_home");
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();

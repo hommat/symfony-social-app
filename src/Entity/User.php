@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -12,6 +13,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    public function __construct()
+    {
+        $this->posts = new ArrayCollection();
+    }
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -21,7 +27,6 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @Assert\NotBlank()
      * @Assert\Length(min=2, max=20)
      */
     private $username;
@@ -41,14 +46,12 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
      * @Assert\Length(min=2, max=20)
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
      * @Assert\Length(min=2, max=20)
      */
     private $lastName;
@@ -64,6 +67,11 @@ class User implements UserInterface
      */
     private $roles = [];
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="author")
+     */
+    private $posts;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,14 +79,12 @@ class User implements UserInterface
 
     public function getUsername(): string
     {
-        return (string) $this->username;
+        return $this->username;
     }
 
-    public function setUsername(string $username): self
+    public function setUsername(string $username)
     {
         $this->username = $username;
-
-        return $this;
     }
 
     public function getRoles(): array
@@ -89,40 +95,27 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(array $roles)
     {
         $this->roles = $roles;
-
-        return $this;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
-        return (string) $this->password;
+        return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $password)
     {
         $this->password = $password;
-
-        return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getSalt()
     {
-        // not needed when using the "bcrypt" algorithm in security.yaml
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials()
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
     public function getEmail(): ?string
@@ -130,11 +123,9 @@ class User implements UserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(string $email)
     {
         $this->email = $email;
-
-        return $this;
     }
 
     public function getFirstName(): ?string
@@ -142,11 +133,9 @@ class User implements UserInterface
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setFirstName(string $firstName)
     {
         $this->firstName = $firstName;
-
-        return $this;
     }
 
     public function getLastName(): ?string
@@ -154,11 +143,9 @@ class User implements UserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): self
+    public function setLastName(string $lastName)
     {
         $this->lastName = $lastName;
-
-        return $this;
     }
 
     public function getBirthDate(): ?\DateTimeInterface
@@ -166,10 +153,13 @@ class User implements UserInterface
         return $this->birthDate;
     }
 
-    public function setBirthDate(\DateTimeInterface $birthDate): self
+    public function setBirthDate(\DateTimeInterface $birthDate)
     {
         $this->birthDate = $birthDate;
+    }
 
-        return $this;
+    public function getPosts(): ArrayCollection
+    {
+        return $this->posts;
     }
 }
