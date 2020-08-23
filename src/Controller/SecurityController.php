@@ -3,21 +3,35 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\User;
 use App\Form\Type\UserType;
 
 class SecurityController extends AbstractController
 {
+    private $urlGenerator;
+
+    public function __construct(UrlGeneratorInterface $urlGenerator)
+    {
+        $this->urlGenerator = $urlGenerator;
+    }
+
     /**
      * @Route("/register", name="app_register", methods={"GET", "POST"})
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
+        if ($this->isGranted("ROLE_USER")) {
+            return new RedirectResponse($this->urlGenerator->generate("app_home"));
+        }
+
         $user = new User();
 
         $form = $this->createForm(UserType::class, $user);
@@ -42,6 +56,10 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        if ($this->isGranted("ROLE_USER")) {
+            return new RedirectResponse($this->urlGenerator->generate("app_home"));
+        }
+
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
@@ -49,6 +67,7 @@ class SecurityController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * @Route("/logout", name="app_logout", methods={"GET"})
      */
     public function logout()
