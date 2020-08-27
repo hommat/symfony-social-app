@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <h2>
+    {{post.title}} - {{post.username}}
+  </h2>
+  <time>{{post.createdAt|date("m/d/Y")}}</time>
+  <p>{{post.content}}
+{% endblock %}

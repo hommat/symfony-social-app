@@ -15,11 +15,26 @@ class PostRepository extends ServiceEntityRepository
 
   public function getListPosts()
   {
+    return $this->getPostQueryBuilder()->getQuery()->getScalarResult();
+  }
+
+  public function getSinglePost(int $id)
+  {
+    return $this
+      ->getPostQueryBuilder()
+      ->where('post.id = :id')
+      ->setParameter('id', $id)
+      ->getQuery()
+      ->getOneOrNullResult();
+  }
+
+  public function getPostQueryBuilder()
+  {
     $qb = $this
       ->createQueryBuilder('post')
-      ->select('post', 'author.username')
+      ->select('post.id', 'post.title', 'post.content', 'post.createdAt', 'author.username')
       ->innerJoin('post.author', 'author');
 
-    return $qb->getQuery()->getScalarResult();
+    return $qb;
   }
 }

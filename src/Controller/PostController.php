@@ -35,6 +35,19 @@ class PostController extends AbstractController
   }
 
   /**
+   * @Route("/posts/{id}", methods={"GET"})
+   */
+  public function single(int $id): Response
+  {
+    $post = $this->postRepository->getSinglePost($id);
+    if (!$post) {
+      return $this->render('404/404.html.twig');
+    }
+
+    return $this->render('post/single.html.twig', ['post' => $post]);
+  }
+
+  /**
    * @Route("/posts/create", name="app_posts_create", methods={"GET", "POST"})
    */
   public function create(Request $request): Response

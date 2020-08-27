@@ -4,10 +4,14 @@
   <h2>Posts</h2>
   <ul>
     {% for post in posts %}
-      <li>
-        <h3>{{post.post_title}} - {{post.username}}</h3>
-        <time>{{post.post_createdAt|date("m/d/Y")}}</time>
-        <p>{{post.post_content}}
+      <li>      
+        <h3>
+          <a href="/posts/{{ post.id }}">
+            {{post.title}} - {{post.username}}
+          </a>
+        </h3>
+        <time>{{post.createdAt|date("m/d/Y")}}</time>
+        <p>{{post.content}}
       </li>
     {% endfor %}
   </ul>
