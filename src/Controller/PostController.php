@@ -9,18 +9,29 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Entity\Post;
 use App\Form\Type\PostType;
+use App\Repository\PostRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @IsGranted("ROLE_USER")
  */
 class PostController extends AbstractController
 {
+  private $postRepository;
+
+  public function __construct(PostRepository $postRepository)
+  {
+    $this->postRepository = $postRepository;
+  }
+
   /**
    * @Route("/posts", name="app_posts", methods={"GET"})
    */
   public function list(): Response
   {
-    return $this->render('post/list.html.twig');
+    $posts = $this->postRepository->getListPosts();
+
+    return $this->render('post/list.html.twig', ['posts' => $posts]);
   }
 
   /**

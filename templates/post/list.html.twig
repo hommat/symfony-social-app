@@ -1,5 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-  Post list here
+  <h2>Posts</h2>
+  <ul>
+    {% for post in posts %}
+      <li>
+        <h3>{{post.post_title}} - {{post.username}}</h3>
+        <time>{{post.post_createdAt|date("m/d/Y")}}</time>
+        <p>{{post.post_content}}
+      </li>
+    {% endfor %}
+  </ul>
 {% endblock %}
