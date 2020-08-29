@@ -74,6 +74,37 @@ class PostController extends AbstractController
   }
 
   /**
+   * @Route("/posts/{id}/update", name="app_posts_update", methods={"GET", "POST"})
+   */
+  public function update(Request $request, int $id): Response
+  {
+    $post = $this->postRepository->findOneById($id);
+
+    if (!$post) {
+      throw $this->createNotFoundException();
+    }
+
+    $isUserOwner = $post->getAuthor()->getId() == $this->getUser()->getId();
+    if (!$isUserOwner) {
+      throw $this->createAccessDeniedException();
+    }
+
+    $form = $this->createForm(PostType::class, $post);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+      $entityManager = $this->getDoctrine()->getManager();
+      $entityManager->flush();
+
+      return $this->redirectToRoute("app_posts_post", [
+        'id' => $post->getId()
+      ]);
+    }
+
+    return $this->render('post/create.html.twig', ['form' => $form->createView()]);
+  }
+
+  /**
    * @Route("/posts/create", name="app_posts_create", methods={"GET", "POST"})
    */
   public function create(Request $request): Response

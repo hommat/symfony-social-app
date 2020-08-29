@@ -6,6 +6,7 @@
       <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}"/>
       <button type="submit">Delete</button>
     </form>
+    <a href='{{path('app_posts_update', {id: post.id})}}'>Update</a>
   {% endif %}
   <h2>
     {{post.title}} - {{post.username}}
